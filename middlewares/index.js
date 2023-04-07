@@ -5,6 +5,7 @@ const xss = require("xss-clean");
 const rateLimit = require("express-rate-limit");
 const compression = require("compression");
 const cors = require("cors");
+const Fingerprint = require("express-fingerprint");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
@@ -32,6 +33,13 @@ module.exports = function (app) {
   });
 
   app.use(limiter);
+
+  // add device fingerprint
+  app.use(
+    Fingerprint({
+      parameters: [Fingerprint.useragent, Fingerprint.acceptHeaders, Fingerprint.geoip],
+    })
+  );
 
   // gzip compression
   const shouldCompress = (req, res) => {
